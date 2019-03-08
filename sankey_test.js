@@ -19,6 +19,29 @@ $(function() {
       .attr("transform",
             "translate(" + margin.left + "," + margin.top + ")");
 
+
+  var axisLabels = ['Pre-Institution', 'Trial Phase'];
+
+  svg.selectAll('text')
+      .data(axisLabels)
+      .enter()
+      .append("text")
+      .attr("font-weight", 700)
+      .attr("font-size", '11px')
+      .attr('font-family', "Lucida Grande")
+      .attr("class", "axis-label")
+      //.attr("transform", "rotate(-90)")
+      .attr("x", function(d,i){
+        var fact = width / (axisLabels.length * 2.0);
+        return fact + (width / (axisLabels.length)) * i;
+      })
+      .attr("y", function(d,i){return 0 })
+      .attr("fill", "#333333")
+      .style("text-anchor", "middle")
+      .text(function(d){return d });
+
+
+
   // Set the sankey diagram properties
   var sankey = d3.sankey()
       .nodeWidth(20)
@@ -62,7 +85,7 @@ $(function() {
   // add in the links
     var link = svg.append("g").selectAll(".link")
         .data(graph.links)
-      .enter().append("path")
+        .enter().append("path")
         .attr("class", "link")
         .attr("d", path)
         .style("stroke-width", function(d) { return Math.max(1, d.dy); })
@@ -94,7 +117,13 @@ $(function() {
 
   // add the rectangles for the nodes
     node.append("rect")
-        .attr("height", function(d) { return d.dy; })
+        .attr("height", function(d) {
+          var temp;
+          temp = d.dy;
+          if (d.name == 'Instituted Claims') {
+            temp = d.dy / 2;
+          };
+          return temp; })
         .attr("width", sankey.nodeWidth())
         .style("fill", function(d) {
         return d.color = color(d.name.replace(/ .*/, "")); })
@@ -130,5 +159,6 @@ $(function() {
       .filter(function(d) { return d.x < width / 2; })
         .attr("x", 6 + sankey.nodeWidth())
         .attr("text-anchor", "start");
+
 
 });

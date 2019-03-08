@@ -31,14 +31,14 @@ $(function() {
   var graph = {
     "nodes":[
       {"node": 0, "name": "Challenged Claims"},
-      {"node": 1, "name": "Instituted Claims"},
-      {"node": 2, "name": "Denied Instituted"},
-      {"node": 3, "name": "Patentable"},
-      {"node": 4, "name": "Unpatentable"},
-      {"node": 5, "name": "Terminated Before Institution", "halfway": true},
-      {"node": 6, "name": "Other", "halfway": true},
-      {"node": 7, "name": "Terminated After Institution", "halfway": true},
-      {"node": 8, "name": "Pending Final Decision", "halfway": true}
+      {"node": 1, "name": "Instituted Claims 77%", "subtitle": "PTAB Average: 64%"},
+      {"node": 2, "name": "Denied Instituted 23%", "subtitle": "PTAB Average: 36%"},
+      {"node": 3, "name": "Patentable 7%", "subtitle": "PTAB Average: 20%"},
+      {"node": 4, "name": "Unpatentable 33%", "subtitle": "PTAB Average: 80%"},
+      {"node": 5, "name": "Terminated Before Institution 20%", "halfway": true},
+      {"node": 6, "name": "Other 2%", "halfway": true},
+      {"node": 7, "name": "Terminated After Institution 20%", "halfway": true},
+      {"node": 8, "name": "Pending Final Decision 40%", "halfway": true}
     ],
     "links": [
       {"source":0,"target":1,"value":70},
@@ -66,13 +66,13 @@ $(function() {
         .attr("class", "link")
         .attr("d", path)
         .style("stroke-width", function(d) { return Math.max(1, d.dy); })
-        .sort(function(a, b) { return b.dy - a.dy; });
+        //.sort(function(a, b) { return b.dy - a.dy; });
 
-  // add the link titles
-    link.append("title")
-          .text(function(d) {
-          return d.source.name + " → " +
-                  d.target.name + "\n" + format(d.value); });
+  // // add the link titles
+  //   link.append("title")
+  //         .text(function(d) {
+  //         return d.source.name + " → " +
+  //                 d.target.name + "\n" + format(d.value); });
 
   // add in the nodes
     var node = svg.append("g").selectAll(".node")
@@ -106,12 +106,27 @@ $(function() {
 
   // add in the title for the nodes
     node.append("text")
+        .attr("font-size", '14px')
+        .attr('font-family', "Lucida Grande")
         .attr("x", -6)
         .attr("y", function(d) { return d.dy / 2; })
         .attr("dy", ".35em")
         .attr("text-anchor", "end")
         .attr("transform", null)
-        .text(function(d) { return d.name; })
+        .text(function(d) { return d.name })
+      .filter(function(d) { return d.x < width / 2; })
+        .attr("x", 6 + sankey.nodeWidth())
+        .attr("text-anchor", "start");
+
+    node.append("text")
+        .attr('font-family', "Lucida Grande")
+        .attr("font-size", '11px')
+        .attr("x", -6)
+        .attr("y", function(d) { return (d.dy / 2) + 15; })
+        .attr("dy", ".45em")
+        .attr("text-anchor", "end")
+        .attr("transform", null)
+        .text(function(d) { return d.subtitle })
       .filter(function(d) { return d.x < width / 2; })
         .attr("x", 6 + sankey.nodeWidth())
         .attr("text-anchor", "start");

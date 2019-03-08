@@ -54,20 +54,20 @@ $(function() {
   var graph = {
     "nodes":[
       {"node": 0, "name": "Challenged Claims"},
-      {"node": 1, "name": "Instituted Claims 77%", "subtitle": "PTAB Average: 64%"},
-      {"node": 2, "name": "Denied Instituted 23%", "subtitle": "PTAB Average: 36%"},
-      {"node": 3, "name": "Patentable 7%", "subtitle": "PTAB Average: 20%"},
-      {"node": 4, "name": "Unpatentable 33%", "subtitle": "PTAB Average: 80%"},
-      {"node": 5, "name": "Terminated Before Institution 20%", "halfway": true},
+      {"node": 1, "name": "Instituted Claims 39%", "subtitle": "PTAB Average: 64%"},
+      {"node": 2, "name": "Denied Instituted 35%", "subtitle": "PTAB Average: 36%"},
+      {"node": 3, "name": "Patentable 3%", "subtitle": "PTAB Average: 20%"},
+      {"node": 4, "name": "Unpatentable 68%", "subtitle": "PTAB Average: 80%"},
+      {"node": 5, "name": "Terminated Before Institution 24%", "halfway": true},
       {"node": 6, "name": "Other 2%", "halfway": true},
-      {"node": 7, "name": "Terminated After Institution 20%", "halfway": true},
-      {"node": 8, "name": "Pending Final Decision 40%", "halfway": true}
+      {"node": 7, "name": "Terminated After Institution 14%", "halfway": true},
+      {"node": 8, "name": "Pending Final Decision 15%", "halfway": true}
     ],
     "links": [
-      {"source":0,"target":1,"value":70},
-      {"source":0,"target":2,"value":30},
-      {"source":1,"target":3,"value":60},
-      {"source":1,"target":4,"value":40},
+      {"source":0,"target":1,"value":39},
+      {"source":0,"target":2,"value":35},
+      {"source":1,"target":3,"value":3},
+      {"source":1,"target":4,"value":68},
       {"source":1,"target":7,"value":14},
       {"source":1,"target":8,"value":15},
       {"source":0,"target":5,"value":24},

@@ -2,7 +2,7 @@ $(function() {
   var units = "Widgets";
 
   // set the dimensions and margins of the graph
-  var margin = {top: 10, right: 10, bottom: 10, left: 10},
+  var margin = {top: 30, right: 10, bottom: 10, left: 10},
       width = 800 - margin.left - margin.right,
       height = 600 - margin.top - margin.bottom;
 
@@ -35,7 +35,7 @@ $(function() {
         var fact = width / (axisLabels.length * 2.0);
         return fact + (width / (axisLabels.length)) * i;
       })
-      .attr("y", function(d,i){return 0 })
+      .attr("y", -10)
       .attr("fill", "#333333")
       .style("text-anchor", "middle")
       .text(function(d){return d });

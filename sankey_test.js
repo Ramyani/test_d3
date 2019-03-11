@@ -64,14 +64,14 @@ $(function() {
       {"node": 8, "name": "Pending Final Decision 15%", "halfway": true}
     ],
     "links": [
-      {"source":0,"target":1,"value":39},
-      {"source":0,"target":2,"value":35},
-      {"source":1,"target":3,"value":3},
-      {"source":1,"target":4,"value":68},
-      {"source":1,"target":7,"value":14},
-      {"source":1,"target":8,"value":15},
-      {"source":0,"target":5,"value":24},
-      {"source":0,"target":6,"value":2}
+      {"source":0,"target":1,"value":974},
+      {"source":0,"target":2,"value":875},
+      {"source":1,"target":3,"value":26},
+      {"source":1,"target":4,"value":659},
+      {"source":1,"target":7,"value":135},
+      {"source":1,"target":8,"value":143},
+      {"source":0,"target":5,"value":584},
+      {"source":0,"target":6,"value":57}
     ]
   };
 

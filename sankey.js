@@ -302,7 +302,8 @@ d3.sankey = function() {
   }
 
   function center(node) {
-    return node.y /15  ;
+    // return node.y + node.dy / 2;
+    return node.y ;
   }
 
   function value(link) {

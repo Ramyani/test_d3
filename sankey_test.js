@@ -10,11 +10,69 @@ $(function() {
       format = function(d) { return formatNumber(d) + " " + units; },
       color = d3.scaleOrdinal(d3.schemeCategory20);
 
+
+var nodeTooltipOffset = 130;
+
+
+
+var tipNodes = d3.tip()
+        .attr('class', 'd3-tip d3-tip-nodes')
+        .offset([-10, 0]);
+
+
+
+var formatAmount = function(val) {
+        //return val.toLocaleString("en-US", {style: 'currency', currency: "USD"}).replace(/\.[0-9]+/, "");
+        return parseFloat(val).toFixed(1) + " $";
+      };
+
+
+
+
+tipNodes.html(function(d) {
+        var object = d3.entries(d),
+          nodeName = object[1].value,
+          linksTo = object[3].value,
+          linksFrom = object[4].value,
+          html;
+
+        html =  '<div class="table-wrapper">'+
+            '<h1>'+nodeName+'</h1>'+
+            '<table>';
+        if (linksFrom.length > 0 & linksTo.length > 0) {
+        html+= '<tr><td><h2>Input:</h2></td><td></td></tr>'
+        }
+        for (i = 0; i < linksFrom.length; ++i) {
+        html += '<tr>'+
+          '<td class="col-left">'+linksFrom[i].source.name+'</td>'+
+          '<td align="right">'+formatAmount(linksFrom[i].value)+'</td>'+
+        '</tr>';
+        }
+        if (linksFrom.length > 0 & linksTo.length > 0) {
+        html+= '<tr><td><h2>Output:</h2></td><td></td></tr>'
+        }
+        for (i = 0; i < linksTo.length; ++i) {
+        html += '<tr>'+
+              '<td class="col-left">'+linksTo[i].target.name+'</td>'+
+              '<td align="right">'+formatAmount(linksTo[i].value)+'</td>'+
+            '</tr>';
+        }
+        html += '</table></div>';
+        return html;
+      });
+
+
+
+
+
+
+
   // append the svg object to the body of the page
   var svg = d3.select("body").append("svg")
       .attr("width", width + margin.left + margin.right)
       .attr("height", height + margin.top + margin.bottom)
     .append("g")
+    .call(tipNodes)
       .attr("transform",
             "translate(" + margin.left + "," + margin.top + ")");
 
@@ -96,18 +154,28 @@ $(function() {
         .data(graph.nodes)
       .enter().append("g")
         .attr("class", "node")
+        .on('mousemove', function(event) {
+        tipNodes
+          .style("top", (d3.event.pageY - $('.d3-tip-nodes').height() - 20) + "px")
+          .style("left", function () {
+          var left = (Math.max(d3.event.pageX - nodeTooltipOffset, 10));
+          left = Math.min(left, window.innerWidth - $('.d3-tip').width() - 20)
+          return left + "px"; })
+        })
+      .on('mouseover', tipNodes.show)
+      .on('mouseout', tipNodes.hide)
         .attr("transform", function(d) {
         return "translate(" + d.x + "," + d.y + ")"; })
-        .call(d3.drag()
-          .subject(function(d) {
-            return d;
-          })
-          .on("start", function() {
-            this.parentNode.appendChild(this);
-          })
-          //.on("drag", dragmove)
+        // .call(d3.drag()
+        //   .subject(function(d) {
+        //     return d;
+        //   })
+        //   .on("start", function() {
+        //     this.parentNode.appendChild(this);
+        //   })
+        //   //.on("drag", dragmove)
 
-        );
+        // );
 
   // add the rectangles for the nodes
     node.append("rect")
@@ -120,8 +188,18 @@ $(function() {
         .style("stroke", function(d) {
         return d3.rgb(d.color).darker(2); })
       .append("title")
-        .text(function(d) {
-        return d.name + "\n" + format(d.value); });
+        // .text(function(d) {
+        // return d.name + "\n" + format(d.value); });
+
+
+
+
+
+
+
+
+
+
 
   // add in the title for the nodes
     node.append("text")
@@ -133,7 +211,9 @@ $(function() {
         .attr("text-anchor", "end")
         .attr("transform", null)
         .text(function(d) { return d.name })
-      .filter(function(d) { return d.x < width / 3; })
+      .filter(function(d) {
+        return (d.node == 0) || (d.halfway);
+      })
         .attr("x", 6 + sankey.nodeWidth())
         .attr("text-anchor", "start");
 
@@ -146,7 +226,9 @@ $(function() {
         .attr("text-anchor", "end")
         .attr("transform", null)
         .text(function(d) { return d.subtitle })
-      .filter(function(d) { return d.x < width / 3; })
+      .filter(function(d) {
+        return (d.node == 0) || (d.halfway);
+      })
         .attr("x", 6 + sankey.nodeWidth())
         .attr("text-anchor", "start");
 });

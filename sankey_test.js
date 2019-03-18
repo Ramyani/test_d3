@@ -71,6 +71,16 @@ $(function() {
    {"source":1, "target":7, "value":135},
    {"source":1, "target":8, "value":143}]};
 
+
+   var ultimateCount = d3.sum(graph.links, function (link) {
+     if(link.source == 0){
+        return link.value;
+     }
+   });
+   var calculatePercentage = function(d) {
+    return ((d / (ultimateCount * 1.0)) * 100).toFixed();
+   };
+
     sankey
         .nodes(graph.nodes)
         .links(graph.links)
@@ -91,6 +101,12 @@ $(function() {
   //         return d.source.name + " → " +
   //                 d.target.name + "\n" + format(d.value); });
 
+  // add tooltip for nodes
+  var tooltip = d3.select("body").append("div")
+    .attr("class", "tooltip")
+    .style("opacity", 0);
+
+
   // add in the nodes
     var node = svg.append("g").selectAll(".node")
         .data(graph.nodes)
@@ -98,16 +114,35 @@ $(function() {
         .attr("class", "node")
         .attr("transform", function(d) {
         return "translate(" + d.x + "," + d.y + ")"; })
-        .call(d3.drag()
-          .subject(function(d) {
-            return d;
-          })
-          .on("start", function() {
-            this.parentNode.appendChild(this);
-          })
-          //.on("drag", dragmove)
+        .on("mouseover", function(d) {
+          var tooltipTxt = "<span>" + d.name + "</span><br><span>" +
+                              format(d.value) + "</span><br><span>" +
+                                calculatePercentage(d.value) + "% of the Challenged Claims (" + format(ultimateCount) + ")</span>";
 
-        );
+          tooltip.transition()
+                // .duration(2)
+                .style("opacity", .9);
+            tooltip.html(tooltipTxt)
+                .style("left", (d3.event.pageX) + "px")
+                .style("top", (d3.event.pageY - 28) + "px");
+        })
+        .on("mouseout", function(d) {
+            tooltip.transition()
+                .duration(500)
+                .style("opacity", 0);
+        });
+
+
+        // .call(d3.drag()
+        //   .subject(function(d) {
+        //     return d;
+        //   })
+        //   .on("start", function() {
+        //     this.parentNode.appendChild(this);
+        //   })
+        //   //.on("drag", dragmove)
+
+        // );
 
   // add the rectangles for the nodes
     node.append("rect")
@@ -120,8 +155,8 @@ $(function() {
         .style("stroke", function(d) {
         return d3.rgb(d.color).darker(2); })
       .append("title")
-        .text(function(d) {
-        return d.name + "\n" + format(d.value); });
+        // .text(function(d) {
+        // return d.name + "\n" + format(d.value); });
 
   // add in the title for the nodes
     node.append("text")

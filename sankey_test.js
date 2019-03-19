@@ -1,5 +1,30 @@
 $(function() {
   var units = "Claims";
+
+
+  // load the data
+  var graph = {"nodes":
+  [{"node":0, "name":"Challenged Claims"},
+   {"node":1, "name":"Instituted Claims 53%", "subtitle":"PTAB Average: 61%"},
+   {"node":2, "name":"Institution Denied 47%", "subtitle":"PTAB Average: 39%"},
+   {"node":3, "name":"Patentable 12%", "subtitle":"PTAB Average: 22%"},
+   {"node":4, "name":"Unpatentable 88%", "subtitle":"PTAB Average: 78%"},
+   {"node":5, "name":"Terminated Before Institution", "halfway":true},
+   {"node":6, "name":"Other", "halfway":true},
+   {"node":7, "name":"Terminated After Institution", "halfway":true},
+   {"node":8, "name":"Pending Final Decision", "halfway":true}],
+ "links":
+  [{"source":0, "target":1, "value":974},
+   {"source":0, "target":2, "value":875},
+   {"source":1, "target":3, "value":86},
+   {"source":1, "target":4, "value":659},
+   {"source":0, "target":5, "value":584},
+   {"source":0, "target":6, "value":33},
+   {"source":1, "target":7, "value":135},
+   {"source":1, "target":8, "value":143}]};
+
+
+
   // set the dimensions and margins of the graph
   var margin = {top: 30, right: 10, bottom: 10, left: 10},
       width = 800 - margin.left - margin.right,
@@ -27,38 +52,22 @@ var formatAmount = function(val) {
       };
 
 
+var ultimateCount = d3.sum(graph.links, function (link) {
+     if(link.source == 0){
+        return link.value;
+     }
+   });
+   var calculatePercentage = function(d) {
+    return ((d / (ultimateCount * 1.0)) * 100).toFixed();
+   };
 
 
 tipNodes.html(function(d) {
-        var object = d3.entries(d),
-          nodeName = object[1].value,
-          linksTo = object[3].value,
-          linksFrom = object[4].value,
-          html;
+        var tooltipTxt = "<span>" + d.name + "</span><br><span>" +
+                              format(d.value) + "</span><br><span>" +
+                                calculatePercentage(d.value) + "% of the Challenged Claims (" + format(ultimateCount) + ")</span>";
 
-        html =  '<div class="table-wrapper">'+
-            '<h1>'+nodeName+'</h1>'+
-            '<table>';
-        if (linksFrom.length > 0 & linksTo.length > 0) {
-        html+= '<tr><td><h2>Input:</h2></td><td></td></tr>'
-        }
-        for (i = 0; i < linksFrom.length; ++i) {
-        html += '<tr>'+
-          '<td class="col-left">'+linksFrom[i].source.name+'</td>'+
-          '<td align="right">'+formatAmount(linksFrom[i].value)+'</td>'+
-        '</tr>';
-        }
-        if (linksFrom.length > 0 & linksTo.length > 0) {
-        html+= '<tr><td><h2>Output:</h2></td><td></td></tr>'
-        }
-        for (i = 0; i < linksTo.length; ++i) {
-        html += '<tr>'+
-              '<td class="col-left">'+linksTo[i].target.name+'</td>'+
-              '<td align="right">'+formatAmount(linksTo[i].value)+'</td>'+
-            '</tr>';
-        }
-        html += '</table></div>';
-        return html;
+      return tooltipTxt;
       });
 
 
@@ -108,26 +117,6 @@ tipNodes.html(function(d) {
   var path = sankey.link();
 
 
-  // load the data
-  var graph = {"nodes":
-  [{"node":0, "name":"Challenged Claims"},
-   {"node":1, "name":"Instituted Claims 53%", "subtitle":"PTAB Average: 61%"},
-   {"node":2, "name":"Institution Denied 47%", "subtitle":"PTAB Average: 39%"},
-   {"node":3, "name":"Patentable 12%", "subtitle":"PTAB Average: 22%"},
-   {"node":4, "name":"Unpatentable 88%", "subtitle":"PTAB Average: 78%"},
-   {"node":5, "name":"Terminated Before Institution", "halfway":true},
-   {"node":6, "name":"Other", "halfway":true},
-   {"node":7, "name":"Terminated After Institution", "halfway":true},
-   {"node":8, "name":"Pending Final Decision", "halfway":true}],
- "links":
-  [{"source":0, "target":1, "value":974},
-   {"source":0, "target":2, "value":875},
-   {"source":1, "target":3, "value":86},
-   {"source":1, "target":4, "value":659},
-   {"source":0, "target":5, "value":584},
-   {"source":0, "target":6, "value":33},
-   {"source":1, "target":7, "value":135},
-   {"source":1, "target":8, "value":143}]};
 
     sankey
         .nodes(graph.nodes)

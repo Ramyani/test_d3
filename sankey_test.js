@@ -18,6 +18,24 @@ $(function() {
       .attr("transform",
             "translate(" + margin.left + "," + margin.top + ")");
 
+  var positionTooltip = function(mouse, scene, tooltip)
+    {
+        //Distance of element from the right edge of viewport
+        if (scene.width - (mouse.x + tooltip.width) < 20)
+        { //If tooltip exceeds the X coordinate of viewport
+            mouse.x = mouse.x - tooltip.width - 20;
+        }
+        //Distance of element from the bottom of viewport
+        if (scene.height - (mouse.y + tooltip.height) < 20)
+        { //If tooltip exceeds the Y coordinate of viewport
+            mouse.y = mouse.y - tooltip.height - 20;
+        }
+        return {
+            top: mouse.y,
+            left: mouse.x
+        };
+    };
+
 
   var axisLabels = ['Pre-Institution', 'Trial Phase'];
 
@@ -119,12 +137,50 @@ $(function() {
                               format(d.value) + "</span><br><span>" +
                                 calculatePercentage(d.value) + "% of the Challenged Claims (" + format(ultimateCount) + ")</span>";
 
+
+           var w = $(window).width();
+            var h = $(window).height();
+            var margin = {
+                x: 10,
+                y: 10
+            };
+            var padding = {
+                x: 10,
+                y: 10
+            };
+
+          var tooltipProps = {
+              width: $('.tooltip').width(),
+              height: $('.tooltip').height(),
+          }
+          var scene = {
+              x: margin.x + padding.x,
+              y: margin.y + padding.y,
+              width: w - (margin.x * 2) - (padding.x * 2),
+              height: h - (margin.y * 2) - (padding.y * 2)
+          }
+
           tooltip.transition()
                 // .duration(2)
                 .style("opacity", .9);
             tooltip.html(tooltipTxt)
-                .style("left", (d3.event.pageX) + "px")
-                .style("top", (d3.event.pageY - 28) + "px");
+                .style("left", function()
+            {
+                var pos = positionTooltip(
+                {
+                    x: d3.event.pageX,
+                    y: d3.event.pageY
+                }, scene, tooltipProps);
+                return (pos.left + 10) + 'px';
+            }).style("top", function()
+            {
+                var pos = positionTooltip(
+                {
+                    x: d3.event.pageX,
+                    y: d3.event.pageY
+                }, scene, tooltipProps);
+                return (pos.top - 10) + 'px';
+            });
         })
         .on("mouseout", function(d) {
             tooltip.transition()
